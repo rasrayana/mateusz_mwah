@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Do You Love Me?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background-color: #000;
+      color: #fff;
+      font-family: 'Press Start 2P', cursive;
+      overflow: hidden;
+    }
+
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      max-width: 90%;
+    }
+
+    .active {
+      display: flex;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 30px;
+    }
+
+    button {
+      padding: 15px 25px;
+      font-size: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', cursive;
+      background-color: #ff69b4;
+      color: white;
+      position: relative;
+      margin: 10px;
+    }
+
+    #noBtn {
+      background-color: #ccc;
+      color: black;
+    }
+
+    #question-text {
+      font-size: 16px;
+      margin: 20px;
+      min-height: 50px;
+    }
+    .letter-text {
+    max-width: 800px;
+    margin: 30px auto;
+    text-align: left;
+    white-space: pre-line;
+    line-height: 1.8;
+    font-size: 10px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid #ff69b4;
+    border-radius: 12px;
+    color: #fff;
+    }
+    
+    #stopimg {
+      max-width: 300px;
+      height: auto;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 🎵 Music -->
+<audio id="bg-music" loop>
+  <source src="/img/youtube-bi0hylxusjo_hjs8V8Ie.mp3" type="audio/mpeg" />
+</audio>
+
+<!-- Screen 1 -->
+<div id="screen1" class="screen active">
+  <img src="./img/hello-kiyty-cute.gif" alt="cute" style="max-width: 300px;">
+  <h1 id="question-text"></h1>
+  <div class="buttons">
+    <button id="yes-btn">Nuuuh</button>
+    <button id="noBtn">Yeeees my queen</button>
+  </div>
+</div>
+
+<!-- Screen Kurwa -->
+<div id="screenKurwa" class="screen">
+  <img src="./img/a0758c9c5832ea29c773aeabf17fd672.gif" alt="Kurwa" style="max-width: 300px; border-radius: 12px;">
+  <h2>Kurwa...</h2>
+  <button id="kurwa-continue">Okay okay, go on 😤</button>
+</div>
+
+<!-- Screen 2 -->
+<div id="screen2" class="screen">
+    <img id="stopimg" src="./img/XD (1).jpg" alt="cute">
+  <h2>Answer some questions pickle boy</h2>
+  <div id="quiz"></div>
+  <button id="continue-btn" style="display:none;">Continue</button>
+</div>
+
+<!-- Screen 3 -->
+<div id="screen3" class="screen">
+    <img id="stopimg" src="./img/download (38).jpg" alt="cute">
+  <h2>💌 Letter for you Mateusz</h2>
+  <div id="letter-text" class="letter-text">
+    <!-- Текст появится построчно через JS -->
+  </div>
+</div>
+
+<script>
+  // 🎵 Фоновая музыка при первом взаимодействии
+  const bgMusic = document.getElementById("bg-music");
+  let musicStarted = false;
+
+  function startMusic() {
+    if (!musicStarted) {
+      try {
+        bgMusic.currentTime = 0.1;
+        bgMusic.volume = 0.3;
+        bgMusic.play();
+        musicStarted = true;
+      } catch (e) {
+        console.log("Music error:", e);
+      }
+    }
+  }
+
+  document.addEventListener("click", startMusic);
+  document.addEventListener("touchstart", startMusic);
+
+  // 📝 Текст вопроса по буквам
+  const question = "Dzień dobry Mateusz. Do you love me?";
+  const questionEl = document.getElementById("question-text");
+  let i = 0;
+
+  function typeQuestion() {
+    if (i < question.length) {
+      questionEl.textContent += question[i];
+      i++;
+      setTimeout(typeQuestion, 100);
+    }
+  }
+
+  typeQuestion();
+
+  // 📱 Экраны
+  const screen1 = document.getElementById("screen1");
+  const screen2 = document.getElementById("screen2");
+  const screen3 = document.getElementById("screen3");
+
+  const yesBtn = document.getElementById("yes-btn");
+  const noBtn = document.getElementById("noBtn");
+  const quizDiv = document.getElementById("quiz");
+  const continueBtn = document.getElementById("continue-btn");
+
+  // 🏃 Кнопка "No" убегает
+  noBtn.addEventListener("mouseenter", () => {
+    const x = Math.random() * (window.innerWidth - 100);
+    const y = Math.random() * (window.innerHeight - 50);
+    noBtn.style.position = "absolute";
+    noBtn.style.left = `${x}px`;
+    noBtn.style.top = `${y}px`;
+  });
+
+  // ✅ Нажатие "Yes" — перейти к тесту
+    yesBtn.addEventListener("click", () => {
+        screen1.classList.remove("active");
+        screenKurwa.classList.add("active");
+    });
+    document.getElementById("kurwa-continue").addEventListener("click", () => {
+        screenKurwa.classList.remove("active");
+        screen2.classList.add("active");
+        startQuiz();
+    });
+
+  // ❓ Вопросы
+  const questions = [
+    {
+      q: "When is my birthday?",
+      options: ["June 24", "January 30", "October 18"],
+      answer: "January 30"
+    },
+    {
+      q: "What turns me on the most?",
+      options: ["You… with ghost face mask 😏", "Men loneliness Epidemic", "Taxes"],
+      answer: "Taxes"
+    },
+    {
+      q: "What would I do if I became you for one day?",
+      options: [" Flirt with myself", "Do a helicopter thing with my shlong", "Unfollow all girls on Instagram"],
+      answer: "Do a helicopter thing with my shlong"
+    }
+  ];
+
+  let current = 0;
+
+  function startQuiz() {
+    showQuestion();
+  }
+
+  function showQuestion() {
+    quizDiv.innerHTML = "";
+    continueBtn.style.display = "none";
+
+    if (current >= questions.length) {
+      continueBtn.style.display = "block";
+      return;
+    }
+
+    const qEl = document.createElement("p");
+    qEl.textContent = questions[current].q;
+    quizDiv.appendChild(qEl);
+
+    questions[current].options.forEach((opt) => {
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.onclick = () => {
+        if (opt === questions[current].answer) {
+          current++;
+          showQuestion();
+        } else {
+          alert("Wrong answer Bitch! Try again 💔");
+        }
+      };
+      quizDiv.appendChild(btn);
+    });
+  }
+
+  continueBtn.addEventListener("click", () => {
+    screen2.classList.remove("active");
+    screen3.classList.add("active");
+  });
+  const letterLines = [
+  "Hi Darling,",
+  "",
+  "It’s been a month since we made it official (Yippeee)",
+  "And a whole year since we first started talking... Wow.",
+  "That’s 12 months of random memes, sweet messages, terrible jokes (mostly mine (*/ω＼*)),",
+  "and a lot of “why are you like this?” moments from both sides.",
+  "",
+  "Honestly, sometimes we argue like we’ve been married for 20 years.",
+  "And yet, through every little disagreement, every sarcastic comment, every “ugh, leave me alone” moment…",
+  "I still want to choose you. Again and again.",
+  "",
+  "You’re the only person I can imagine rolling my eyes at for the rest of my life.",
+  "The only one I want to laugh with, cry to, make up with, grow with, and maybe even grow old with",
+  "(as long as you don’t lose all your hair (NOT)).",
+  "",
+  "It still feels unreal that we haven’t even met in person yet.",
+  "But you’re already such a big part of my life and my heart fully belongs to you.",
+  "And in just one month, when I move to Serbia, we’ll finally close the distance (Ураа).",
+  "",
+  "I don’t know if I’ll cry, freeze, or just run away (┬┬﹏┬┬) —",
+  "but whatever happens, I know it’s going to be our moment.",
+  "",
+  "So yeah — we fight, we tease, we drive each other crazy sometimes.",
+  "But I wouldn’t want this with anyone else.",
+  "You’re my favorite headache.",
+  "And I hope, with all my heart, that I get to live the rest of my life with you by my side.",
+  "",
+  "Happy little anniversary, Mateusz.",
+  "With all my love,",
+  "Raiena 💌"
+];
+
+function showLetterText() {
+  const letterDiv = document.getElementById("letter-text");
+  let lineIndex = 0;
+  let wordIndex = 0;
+
+  function addWord() {
+    if (lineIndex < letterLines.length) {
+      const words = letterLines[lineIndex].split(" ");
+      let lineEl = letterDiv.lastElementChild;
+
+      if (!lineEl || lineEl.dataset.lineIndex != lineIndex) {
+        lineEl = document.createElement("div");
+        lineEl.dataset.lineIndex = lineIndex;
+        letterDiv.appendChild(lineEl);
+      }
+
+      lineEl.textContent += words[wordIndex] + " ";
+      wordIndex++;
+
+      if (wordIndex < words.length) {
+        setTimeout(addWord, 200); // Задержка между словами
+      } else {
+        wordIndex = 0;
+        lineIndex++;
+        setTimeout(addWord, 400); // Пауза перед следующей строкой
+      }
+    }
+  }
+
+  addWord();
+}
+
+// Запускаем при переходе к screen3
+continueBtn.addEventListener("click", () => {
+  screen2.classList.remove("active");
+  screen3.classList.add("active");
+  showLetterText();
+});
+</script>
+</body>
+</html>
